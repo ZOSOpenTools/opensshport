@@ -1,0 +1,14 @@
+diff --git a/monitor.c b/monitor.c
+index 9d6672b..4d61aab 100644
+--- a/monitor.c
++++ b/monitor.c
+@@ -904,7 +904,9 @@ mm_answer_pwnamallow(struct ssh *ssh, int sock, struct sshbuf *m)
+ 	PUTPW(m, pw_expire);
+ #endif
+ 	if ((r = sshbuf_put_cstring(m, pwent->pw_name)) != 0 ||
++#ifndef __MVS__
+ 	    (r = sshbuf_put_cstring(m, "*")) != 0 ||
++#endif
+ #ifdef HAVE_STRUCT_PASSWD_PW_GECOS
+ 	    (r = sshbuf_put_cstring(m, pwent->pw_gecos)) != 0 ||
+ #endif
