@@ -1,5 +1,5 @@
 diff --git a/misc.c b/misc.c
-index ed3e9d3..5c0f0c4 100644
+index ed3e9d3..616af58 100644
 --- a/misc.c
 +++ b/misc.c
 @@ -43,7 +43,9 @@
@@ -22,7 +22,18 @@ index ed3e9d3..5c0f0c4 100644
  #ifdef HAVE_STRUCT_PASSWD_PW_GECOS
  	copy->pw_gecos = xstrdup(pw->pw_gecos == NULL ? "" : pw->pw_gecos);
  #endif
-@@ -1845,12 +1849,14 @@ monotime_double(void)
+@@ -557,8 +561,10 @@ pwfree(struct passwd *pw)
+ 	if (pw == NULL)
+ 		return;
+ 	free(pw->pw_name);
++#ifndef __MVS__
+ 	freezero(pw->pw_passwd,
+ 	    pw->pw_passwd == NULL ? 0 : strlen(pw->pw_passwd));
++#endif
+ #ifdef HAVE_STRUCT_PASSWD_PW_GECOS
+ 	free(pw->pw_gecos);
+ #endif
+@@ -1845,12 +1851,14 @@ monotime_double(void)
  void
  bandwidth_limit_init(struct bwlimit *bw, uint64_t kbps, size_t buflen)
  {
@@ -37,7 +48,7 @@ index ed3e9d3..5c0f0c4 100644
  }
  
  /* Callback from read/write loop to insert bandwidth-limiting delays */
-@@ -1859,7 +1865,7 @@ bandwidth_limit(struct bwlimit *bw, size_t read_len)
+@@ -1859,7 +1867,7 @@ bandwidth_limit(struct bwlimit *bw, size_t read_len)
  {
  	uint64_t waitlen;
  	struct timespec ts, rm;
@@ -46,7 +57,7 @@ index ed3e9d3..5c0f0c4 100644
  	bw->lamt += read_len;
  	if (!timerisset(&bw->bwstart)) {
  		monotime_tv(&bw->bwstart);
-@@ -1903,6 +1909,7 @@ bandwidth_limit(struct bwlimit *bw, size_t read_len)
+@@ -1903,6 +1911,7 @@ bandwidth_limit(struct bwlimit *bw, size_t read_len)
  
  	bw->lamt = 0;
  	monotime_tv(&bw->bwstart);
